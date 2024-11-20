@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 interface ImageData {
@@ -10,6 +10,7 @@ interface ImageData {
 export default function Home() {
   const [image, setImage] = useState<ImageData | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const pasteRef = useRef<HTMLDivElement | null>(null);
 
   // Detect mobile devices
   useEffect(() => {
@@ -30,20 +31,10 @@ export default function Home() {
     }
   };
 
-  const triggerPaste = async () => {
-    try {
-      const clipboardItems = await navigator.clipboard.read(); // Read clipboard items
-      const imageItem = clipboardItems.find((item) =>
-        item.types.includes("image/png") || item.types.includes("image/jpeg")
-      );
-
-      if (imageItem) {
-        const blob = await imageItem.getType(imageItem.types[0]); // Get image blob
-        const url = URL.createObjectURL(blob);
-        setImage({ file: new File([blob], "pasted-image"), url });
-      }
-    } catch {
-      alert("Unable to access clipboard. Make sure your browser supports this feature.");
+  const triggerPaste = () => {
+    if (pasteRef.current) {
+      pasteRef.current.focus(); // Focus the contentEditable element
+      document.execCommand("paste"); // Trigger the native paste command
     }
   };
 
@@ -59,7 +50,6 @@ export default function Home() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-black via-gray-900 to-gray-800"
-      onPaste={handlePaste}
     >
       <div className="text-center text-white">
         <motion.div
@@ -69,18 +59,31 @@ export default function Home() {
         >
           <h1 className="text-3xl font-bold">Paste an Image</h1>
           <p className="mt-2 text-gray-400">
-            On desktop, use Ctrl+V or Cmd+V. On mobile, tap the button below to paste.
+            On desktop, use Ctrl+V or Cmd+V. On mobile, tap the button below and paste into the box.
           </p>
         </motion.div>
 
-        {/* Paste Button for Mobile */}
+        {/* Mobile Paste Section */}
         {isMobile && (
-          <button
-            onClick={triggerPaste}
-            className="mt-6 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600"
-          >
-            Paste Image
-          </button>
+          <div className="mt-6">
+            <button
+              onClick={triggerPaste}
+              className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600"
+            >
+              Paste Image
+            </button>
+            <div
+              ref={pasteRef}
+              className="mt-4 p-4 border-2 border-dashed border-gray-500 rounded-lg w-full max-w-md bg-gray-800 text-gray-400"
+              contentEditable={true}
+              suppressContentEditableWarning={true} // Prevent React warning
+              onPaste={handlePaste}
+            >
+              <p className="text-center pointer-events-none select-none">
+                Tap the button above, then paste your image here.
+              </p>
+            </div>
+          </div>
         )}
 
         {image && (
@@ -107,4 +110,3 @@ export default function Home() {
     </div>
   );
 }
-
