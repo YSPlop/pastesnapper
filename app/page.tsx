@@ -1,4 +1,5 @@
 "use client";
+"use client";
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
@@ -26,9 +27,15 @@ export default function Home() {
       const file = imageItem.getAsFile();
       if (file) {
         const url = URL.createObjectURL(file);
-        setImage({ file, url });
+        // Prevent duplicates by checking if the image is already set
+        if (!image || image.url !== url) {
+          setImage({ file, url });
+        }
       }
     }
+
+    // Prevent default paste behavior to avoid image preview duplication
+    e.preventDefault();
   };
 
   const triggerPaste = () => {
@@ -78,8 +85,11 @@ export default function Home() {
               contentEditable={true}
               suppressContentEditableWarning={true} // Prevent React warning
               onPaste={handlePaste}
-            />
-            
+            >
+              <p className="text-center pointer-events-none select-none">
+                Tap the button above, then paste your image here.
+              </p>
+            </div>
           </div>
         )}
 
