@@ -55,9 +55,7 @@ export default function Home() {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-black via-gray-900 to-gray-800"
-    >
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-black via-gray-900 to-gray-800 overflow-hidden">
       <div className="text-center text-white">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -81,7 +79,7 @@ export default function Home() {
             </button>
             <div
               ref={pasteRef}
-              className="mt-4 p-4 border-2"
+              className="mt-4 p-4 border-2 border-dashed border-gray-500 rounded-lg w-full max-w-md bg-gray-800 text-gray-400"
               contentEditable={true}
               suppressContentEditableWarning={true} // Prevent React warning
               onPaste={handlePaste}
@@ -96,11 +94,14 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="mt-6"
           >
-            <img
-              src={image.url}
-              alt="Pasted"
-              className="w-full max-w-md mx-auto rounded-lg shadow-lg"
-            />
+            {/* Preview Image */}
+            <div className="w-64 h-64 mx-auto">
+              <img
+                src={image.url}
+                alt="Pasted"
+                className="w-full h-full object-contain rounded-lg shadow-lg"
+              />
+            </div>
             <button
               onClick={handleDownload}
               className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600"
