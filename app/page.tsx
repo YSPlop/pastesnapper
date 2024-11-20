@@ -42,7 +42,7 @@ export default function Home() {
         const url = URL.createObjectURL(blob);
         setImage({ file: new File([blob], "pasted-image"), url });
       }
-    } catch (err) {
+    } catch {
       alert("Unable to access clipboard. Make sure your browser supports this feature.");
     }
   };
