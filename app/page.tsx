@@ -81,15 +81,11 @@ export default function Home() {
             </button>
             <div
               ref={pasteRef}
-              className="mt-4 p-4 border-2 border-dashed border-gray-500 rounded-lg w-full max-w-md bg-gray-800 text-gray-400"
+              className="mt-4 p-4 border-2"
               contentEditable={true}
               suppressContentEditableWarning={true} // Prevent React warning
               onPaste={handlePaste}
-            >
-              <p className="text-center pointer-events-none select-none">
-                Tap the button above, then paste your image here.
-              </p>
-            </div>
+            />
           </div>
         )}
 
