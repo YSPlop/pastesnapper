@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface ImageData {
@@ -9,17 +9,26 @@ interface ImageData {
 
 export default function Home() {
   const [image, setImage] = useState<ImageData | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Detect mobile devices
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    setIsMobile(
+      /iPhone|iPad|iPod|Android/i.test(userAgent) // Detect mobile or tablet
+    );
+  }, []);
+
+  // Handles pasting images from the clipboard
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
-    const items = e.clipboardData.items;
-    for (const item of items) {
-      if (item.type.includes("image")) {
-        const file = item.getAsFile();
-        if (file) {
-          const url = URL.createObjectURL(file);
-          setImage({ file, url });
-        }
-        break;
+    const items = Array.from(e.clipboardData.items);
+    const imageItem = items.find((item) => item.type.includes("image"));
+
+    if (imageItem) {
+      const file = imageItem.getAsFile();
+      if (file) {
+        const url = URL.createObjectURL(file);
+        setImage({ file, url });
       }
     }
   };
@@ -35,8 +44,7 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black via-gray-900 to-gray-800"
-      onPaste={handlePaste}
+      className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-black via-gray-900 to-gray-800"
     >
       <div className="text-center text-white">
         <motion.div
@@ -44,9 +52,25 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-3xl font-bold">Paste an Image (Ctrl+V or Cmd+V)</h1>
-          <p className="mt-2 text-gray-400">You can preview the image below and download it using the button provided.</p>
+          <h1 className="text-3xl font-bold">Paste an Image</h1>
+          <p className="mt-2 text-gray-400">
+            On desktop, use Ctrl+V or Cmd+V. On mobile, long press in the box below to paste.
+          </p>
         </motion.div>
+
+        {/* Mobile Paste Section */}
+        {isMobile && (
+          <div
+            className="mt-6 p-4 border-2 border-dashed border-gray-500 rounded-lg w-full max-w-md bg-gray-800 text-gray-400"
+            contentEditable={true}
+            suppressContentEditableWarning={true} // Prevents React warning
+            onPaste={handlePaste}
+          >
+            <p className="text-center pointer-events-none select-none">
+              Long press here to paste your image
+            </p>
+          </div>
+        )}
 
         {image && (
           <motion.div
