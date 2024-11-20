@@ -13,10 +13,8 @@ export default function Home() {
 
   // Detect mobile devices
   useEffect(() => {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    setIsMobile(
-      /iPhone|iPad|iPod|Android/i.test(userAgent) // Detect mobile or tablet
-    );
+    const userAgent = navigator.userAgent || navigator.vendor;
+    setIsMobile(/iPhone|iPad|iPod|Android/i.test(userAgent)); // Detect mobile or tablet
   }, []);
 
   // Handles pasting images from the clipboard
