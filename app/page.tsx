@@ -78,11 +78,8 @@ export default function Home() {
               contentEditable={true}
               suppressContentEditableWarning={true} // Prevent React warning
               onPaste={handlePaste}
-            >
-              <p className="text-center pointer-events-none select-none">
-                Tap the button above, then paste your image here.
-              </p>
-            </div>
+            />
+            
           </div>
         )}
 
